@@ -1,0 +1,41 @@
+#!/bin/sh
+
+date=`date +'%Y%m%d%H%M'`
+
+base='/data/prod/indaba'
+
+work_dir=$base/agg_work
+target_dir=$base/agg_$date
+prod_dir=$base/aggregation
+
+basedir=%2Fdata%2Findaba%2Fagg_work%2Fproducts
+cachedir=%2Fdata%2Findaba%2Fagg_work%2Fcache
+
+mkdir -p $work_dir
+mkdir -p $work_dir/export
+
+
+curl http://localhost:7080/ids/dataLoader.do?log=text\&debug=1 2>&1> $work_dir/agg_log.html
+
+# check the output
+if ( grep '^\[SUCCESS\]' $work_dir/agg_log.html ) ; then
+	mv $work_dir $target_dir
+
+	rm -fr $prod_dir
+	ln -s $target_dir $prod_dir
+	# remove files 3 days old
+	find $base -type d -and -mtime +10  -and -name agg_\* -exec rm -fr {} \;
+
+        curl http://localhost:7080/ids/aggregate.do
+else
+	# problem
+
+        curl http://localhost:7080/ids/aggregate.do
+
+	 mail {{ops_email}} -x {{ops_email}} -s 'Problem running indaba aggregation' -- -f {{ops_email}} << EOF
+Files are moved to /data/prod/indaba/agg_problem_$date
+EOF
+
+	mv $work_dir /data/prod/indaba/agg_problem_$date
+fi
+

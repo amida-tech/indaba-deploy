@@ -1,0 +1,51 @@
+---
+- name: add group tomcat
+  group: name=tomcat state=present
+
+- name: add user tomcat
+  user: name=tomcat shell=/bin/bash groups="tomcat,users" append=yes createhome=yes state=present
+
+- file: path={{app_dir}}/tomcat/ state=directory owner=tomcat
+
+- name: download ..
+  get_url: url={{tomcat_url}} dest={{app_dir}}/tomcat/ force=no owner=tomcat
+
+- name: .. and unzip tomcat
+  unarchive: src={{app_dir}}/tomcat/apache-tomcat-{{tomcat_version}}.tar.gz dest={{app_dir}}/tomcat copy=no creates=no owner=tomcat
+
+- file: path={{app_dir}}/tomcat recurse=yes owner=tomcat group=tomcat state=directory
+
+- name: .. create indaba dir
+  file: path={{app_dir}}/prod/tomcat5_indaba/ state=directory owner=tomcat group=tomcat
+
+- name: .. create indaba_wf dir
+  file: path={{app_dir}}/prod/tomcat5_indaba_wf/ state=directory owner=tomcat group=tomcat
+
+- name: copy Tomcat to indaba dir
+  shell: cp -R {{app_dir}}/tomcat/apache-tomcat-{{tomcat_version}}/* {{app_dir}}/prod/tomcat5_indaba/
+  sudo: yes
+  sudo_user: tomcat
+
+- name: copy Tomcat to indaba_wf dir
+  shell: cp -R {{app_dir}}/tomcat/apache-tomcat-{{tomcat_version}}/* {{app_dir}}/prod/tomcat5_indaba_wf/
+  sudo: yes
+  sudo_user: tomcat
+  
+- name: configure Tomcat service (prod)
+  copy: src=conf_prod/ dest={{app_dir}}/prod/tomcat5_indaba/conf owner=tomcat
+  
+- name: configure Tomcat service (wf)
+  copy: src=conf_prod/ dest={{app_dir}}/prod/tomcat5_indaba_wf/conf owner=tomcat
+
+- name: configure Tomcat service (prod)
+  template: src=conf_prod/server.xml.j2 dest={{app_dir}}/prod/tomcat5_indaba/conf/server.xml owner=tomcat
+  
+- name: configure Tomcat service (wf)
+  template: src=conf_wf/server.xml.j2 dest={{app_dir}}/prod/tomcat5_indaba_wf/conf/server.xml owner=tomcat
+
+- name: create Tomcat service (prod)
+  template: src=tomcat.service.j2 dest=/etc/systemd/system/tomcat.service owner=tomcat
+
+- name: create Tomcat service (wf)
+  template: src=tomcat_wf.service.j2 dest=/etc/systemd/system/tomcat_wf.service owner=tomcat
+  notify: restart tomcat_wf

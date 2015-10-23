@@ -1,0 +1,14 @@
+#!/bin/bash
+
+CNT=`mysql -s -e 'select count(*) from information_schema.processlist'`
+MAX=500
+MAILTO='{{ops_email}}'
+
+
+if [[ $CNT -gt $MAX ]]; then
+	SUB="Connection $CNT over $MAX"
+	mail -s $SUB $MAILTO -- -f "{{ops_subject}}" << EOF
+Number of connection in db reached $CNT, over threshold of $MAX
+EOF
+
+fi

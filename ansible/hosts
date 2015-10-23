@@ -1,0 +1,2 @@
+[all]
+54.201.21.240 ansible_ssh_private_key_file=~/amida-indaba.pem ansible_ssh_user=centos

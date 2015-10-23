@@ -1,0 +1,21 @@
+- name: restart apache
+  service: name=httpd state=restarted enabled=yes
+
+- name: restart mariadb
+  service: name=mariadb state=restarted enabled=yes
+
+- name: restart tomcat
+  service: name=tomcat state=restarted enabled=yes
+
+- name: restart tomcat_wf
+  service: name=tomcat_wf state=restarted enabled=yes
+  
+- name: restart iptables
+  service: name=iptables state=restarted
+
+- name: restart postfix
+  service: name=postfix state=restarted
+
+- name: restart mysqld
+  service: name=mysqld state=restarted enabled=yes
+

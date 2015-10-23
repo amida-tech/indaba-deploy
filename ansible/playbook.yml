@@ -1,0 +1,20 @@
+---
+- hosts: all
+  sudo: yes
+  vars_files:
+    - group_vars/all
+    - group_vars/private
+
+  roles:
+    - common
+    - mysql
+    - s3-fuse
+    - apache
+    - php
+##    - mariadb
+    - java
+    - tomcat
+    - indaba
+    - workflow
+##    - postfix
+

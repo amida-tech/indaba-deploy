@@ -1,0 +1,11 @@
+---
+- name: Install misc staff
+  yum: name={{item}} state=present
+  sudo: yes
+  with_items:
+    - unzip
+    - wget
+
+#- name: deploy iptables rules
+#  template: src=iptables-save dest=/etc/sysconfig/iptables
+#  notify: restart iptables

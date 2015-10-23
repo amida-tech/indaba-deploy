@@ -1,0 +1,20 @@
+---
+- name: Install php and httpd
+  yum: name="@php" state=present
+  sudo: yes
+
+- name: Install php-mysql
+  yum : name="php-mysql" state=present
+  sudo: yes
+
+- name: Copy php.ini file
+  copy: src=php.ini dest=/etc/php.ini
+  sudo: yes
+  notify: restart apache
+
+#- name: Copy httpd.conf file (redirect calls to tomcat using AJP13 protocol)
+#  copy: src=httpd.conf dest=/etc/httpd/conf
+#  sudo: yes
+#  notify: restart apache
+
+- service: name=httpd state=started enabled=yes

@@ -1,0 +1,11 @@
+---
+- yum: name=httpd state=present
+
+- yum: name=mod_ssl state=present
+
+- file: src=00-ssl.conf dest=/etc/httpd/conf.modules.d/00-ssl.conf owner=root
+
+- file: path={{app_dir}}/prod/apache/logs state=directory owner=apache
+
+- template: src=indaba.conf.j2 dest=/etc/httpd/conf.d/indaba.conf owner=root
+  notify: restart apache

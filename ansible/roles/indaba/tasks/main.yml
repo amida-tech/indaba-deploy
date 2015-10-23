@@ -1,0 +1,76 @@
+---
+- file: path={{app_dir}}/builds  state=directory owner=tomcat
+
+#INDABA prod- name: copy and unzip indaba var's
+- unarchive: src=cp.zip dest={{app_dir}}/prod/tomcat5_indaba/webapps creates=no owner=tomcat
+
+- name: copy and unzip indaba var's
+  unarchive: src=fm.zip dest={{app_dir}}/prod/tomcat5_indaba/webapps creates=no owner=tomcat
+
+- name: copy and unzip indaba var's
+  unarchive: src=ids.zip dest={{app_dir}}/prod/tomcat5_indaba/webapps creates=no owner=tomcat
+
+- name: copy and unzip indaba var's
+  unarchive: src=indaba.zip dest={{app_dir}}/prod/tomcat5_indaba/webapps creates=no owner=tomcat
+
+- name: copy templates
+  template: src={{item.src}} dest={{item.dest}} owner=tomcat
+  with_items:
+      - { src: 'cp/WEB-INF/config/indaba_controlpanel_config.properties.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/cp/WEB-INF/config/indaba_controlpanel_config.properties' }
+      - { src: 'cp/WEB-INF/applicationContext.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/cp/WEB-INF/applicationContext.xml' }
+      - { src: 'cp/WEB-INF/web.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/cp/WEB-INF/web.xml' }
+      - { src: 'fm/WEB-INF/classes/conf/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/fm/WEB-INF/classes/conf/persistence.xml' }
+      - { src: 'fm/WEB-INF/classes/META-INF/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/fm/WEB-INF/classes/META-INF/persistence.xml' }
+      - { src: 'fm/WEB-INF/config/indaba_config.properties.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/fm/WEB-INF/config/indaba_config.properties' }
+      - { src: 'fm/WEB-INF/spring/applicationContext.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/fm/WEB-INF/spring/applicationContext.xml' }
+      - { src: 'fm/WEB-INF/web.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/fm/WEB-INF/web.xml' }
+      - { src: 'ids/WEB-INF/classes/conf/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/ids/WEB-INF/classes/conf/persistence.xml' }
+      - { src: 'ids/WEB-INF/classes/META-INF/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/ids/WEB-INF/classes/META-INF/persistence.xml' }
+      - { src: 'ids/WEB-INF/spring/applicationContext.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/ids/WEB-INF/spring/applicationContext.xml' }
+      - { src: 'ids/WEB-INF/web.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/ids/WEB-INF/web.xml' }
+      - { src: 'indaba/WEB-INF/classes/conf/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/indaba/WEB-INF/classes/conf/persistence.xml' }
+      - { src: 'indaba/WEB-INF/classes/META-INF/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/indaba/WEB-INF/classes/META-INF/persistence.xml' }
+      - { src: 'indaba/WEB-INF/config/indaba_config.properties.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/indaba/WEB-INF/config/indaba_config.properties' }
+      - { src: 'indaba/WEB-INF/spring/applicationContext.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/indaba/WEB-INF/spring/applicationContext.xml' }
+      - { src: 'indaba/WEB-INF/web.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba/webapps/indaba/WEB-INF/web.xml' }
+
+#INDABA wf
+- name: copy and unzip indaba var's
+  unarchive: src=ids.zip dest={{app_dir}}/prod/tomcat5_indaba_wf/webapps creates=no owner=tomcat
+
+- name: copy and unzip indaba var's
+  unarchive: src=indaba.zip dest={{app_dir}}/prod/tomcat5_indaba_wf/webapps creates=no owner=tomcat
+
+- file: path={{app_dir}}/prod/tomcat5_indaba_wf/webapps/indaba_wf state=absent
+
+- command: mv {{app_dir}}/prod/tomcat5_indaba_wf/webapps/indaba {{app_dir}}/prod/tomcat5_indaba_wf/webapps/indaba_wf
+  sudo: yes
+  sudo_user: tomcat
+
+- template: src={{item.src}} dest={{item.dest}} owner=tomcat
+  with_items:
+      - { src: 'ids/WEB-INF/classes/conf/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/ids/WEB-INF/classes/conf/persistence.xml' }
+      - { src: 'ids/WEB-INF/classes/META-INF/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/ids/WEB-INF/classes/META-INF/persistence.xml' }
+      - { src: 'ids/WEB-INF/spring/applicationContext.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/ids/WEB-INF/spring/applicationContext.xml' }
+      - { src: 'ids/WEB-INF/web.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/ids/WEB-INF/web.xml' }
+      - { src: 'indaba/WEB-INF/classes/conf/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/indaba_wf/WEB-INF/classes/conf/persistence.xml' }
+      - { src: 'indaba/WEB-INF/classes/META-INF/persistence.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/indaba_wf/WEB-INF/classes/META-INF/persistence.xml' }
+      - { src: 'indaba/WEB-INF/config/indaba_config.properties.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/indaba_wf/WEB-INF/config/indaba_config.properties' }
+      - { src: 'indaba/WEB-INF/spring/applicationContext.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/indaba_wf/WEB-INF/spring/applicationContext.xml' }
+      - { src: 'indaba/WEB-INF/web.xml.j2', dest: '{{app_dir}}/prod/tomcat5_indaba_wf/webapps/indaba_wf/WEB-INF/web.xml' }
+
+- file: path={{app_dir}}/prod/apache/html/indaba_admin/ state=directory owner=apache
+
+#INDABA admin
+- name: unpack indaba_admin
+  unarchive: src=apache.zip dest={{app_dir}}/prod owner=apache
+- template: src=indaba_admin/include/config.inc dest={{app_dir}}/prod/apache/html/indaba_admin/include owner=apache
+  
+# SELinux have a quite strict rules for Apache
+#
+# sudo semanage fcontext -a -t httpd_sys_content_t "/apps/prod/apache(/.*)?"
+# sudo semanage fcontext -a -t httpd_log_t "/apps/prod/apache/logs(/.*)?"
+# sudo restorecon -Rv /apps/prod/apache
+#
+# see http://www.serverlab.ca/tutorials/linux/web-servers-linux/configuring-selinux-policies-for-apache-web-servers/
+#

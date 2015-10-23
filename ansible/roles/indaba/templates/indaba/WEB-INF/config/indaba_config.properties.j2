@@ -1,0 +1,79 @@
+################################################################
+#                                                              #
+#            Indaba web application configuration              #
+# Copyright 2010 OpenConcept Systems,Inc. All rights reserved. #
+#                                                              #
+################################################################
+
+# set email server
+mail.smtp.host={{mail_smtp_host}}
+mail.smtp.port={{mail_smtp_port}}
+mail.smtp.auth={{mail_smtp_auth}}
+mail.smtp.sender={{mail_smtp_sender}}
+mail.smtp.username={{mail_smtp_username}}
+mail.smtp.password={{mail_smtp_password}}
+
+# max number of attempts to send a mail
+mailbatch.max.send=10000
+
+# max number of mails to process each cycle
+mailbatch.max.size=50
+
+# attachment file storage location
+# base path
+storage.upload.base=/data/upload
+# storage path format. 0: base; 1: userid; 2: date; 3: filename
+storage.path.format={0}/{1}/{2}/{3}
+storage.date.format=yyyyMMdd
+
+storage.upload.cntattach.name=contentattachment
+
+# content attachement path. 0: base path, 1: horseid, 2: filename
+storage.upload.contentattachment.path={0}/contentattachment/{1}/{2}
+
+storage.img.base=/data/images
+storage.img.filename.fmt=hc_horse_id_{1}.jpg
+img.type=jpeg
+img.wait=10000
+img.width=800
+img.height=600
+
+# people icon path. 0: base path, 1: image file name
+storage.img.peopleicon.path={0}/peopleicons/{1}
+
+# sponsor logo base url. 0: admin tool's base url (refer to 'admintool.baseurl')
+loader.sponsorlogo.baseurl={0}/upload_files/sponsor_logos
+
+# sponsor logo path. 0: base path, 1: project id, 2: file name
+# Note, this parameter is deprecated and won't be used.
+# Actually, you should use 'loader.sponsorlogs.baseurl'
+storage.img.sponsorlogo.path={0}/sponsor_logos/{1}/{2}
+
+# messaging
+message.inbox.sidebar.size=5
+message.inbox.pagesize=10
+
+# admintool
+admintool.baseurl=http://{{hostname}}/indaba_admin
+
+# workflow
+workflow.alert_resend_interval=4320
+workflow.reload_interval=0
+
+# cookie session timeout
+cookie.persistent.enabled=false
+session.token.timeout=1200000
+
+# I18N text resource template engine settings
+# Please gurantee the tomcat user must have READ permission on i18n.src.dir
+# and WRITE permission on i18n.backup.dir and i18n.output.dir
+i18n.resource.src.orig.dir=/Users/jiangjeff/Workspace/indaba/trunk/Builder/web
+i18n.resource.src.tagged.dir=/Users/jiangjeff/Workspace/indaba/trunk/Builder/web/i18n_tagged
+i18n.resource.backup.dir=/tmp/i18n_backup
+i18n.resource.output.dir=/Users/jiangjeff/Workspace/indaba/trunk/Builder/web/i18n_output
+
+auth.ingore.paths=preactivate.do,activate.do,login.do,forgetpwd.do,runWorkflow.do,userfinder.do,fireuserfinder.do,mailbatch.do,sourceFile.do,textResource.do,textResourceTemplate.do,notificationEdit.do,jsI18nMsg.do,i18nTools.do,404.jsp,error.jsp
+auth.restricted.paths=runWorkflow.do,fireuserfinder.do,mailbatch.do,i18nTools.do
+auth.access.whitelist=localhost,127.0.0.1
+
+i18n.resource.dir=/WEB-INF/config/intl_resources

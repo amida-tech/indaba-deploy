@@ -1,0 +1,112 @@
+#LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
+
+ProxyRequests Off
+ProxyPreserveHost On
+ProxyTimeout 1000
+TimeOut 1000
+#ProxyIOBufferSize 256
+ProxyReceiveBufferSize 512
+
+
+# Disable access to dataLoader.do
+<FilesMatch "dataLoader\.do$">
+	#Deny from all
+    Require all denied
+</FilesMatch>
+
+<VirtualHost *:80>
+
+    ServerAdmin {{server_admin_email}}
+    DocumentRoot {{app_dir}}/prod/apache/html
+    ServerName {{servername}} 
+    #ServerName indabaplatform.com 
+    ServerAlias {{serveralias}}
+    ErrorLog {{app_dir}}/prod/apache/logs/error_log
+    #CustomLog /apps/prod/apache/logs/access_log common
+    LogFormat "%a %l %u %t \"%r\" %>s %b %O %D" responsetime
+    # %s - status code
+    # %B - size of requested entity itself
+    # %O - size of response message
+    # %D - response time
+    CustomLog {{app_dir}}/prod/apache/logs/access_log responsetime
+
+
+    # Rewrite to https
+    RewriteEngine On
+    Options +FollowSymlinks
+
+    # If incoming request is not using port 443
+    RewriteCond %\{SERVER_PORT\} !^443$
+
+    RewriteRule ^/(.*) https://{{servername}}/$1 [L,R]
+
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName {{servername}} 
+    ServerAlias {{serveralias}} 
+    SSLEngine On
+    #SSLCertificateFile /etc/httpd/cert/indabaplatform.com.crt
+    #SSLProtocol all -SSLv2
+    SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+    #SSLCertificateKeyFile /etc/httpd/cert/indabaplatform.com.key
+    #SSLCACertificateFile /etc/httpd/cert/intermediate.crt
+    SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+    SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+
+    ServerName {{servername}}:443
+    ServerAlias {{serveralias}}:443
+    DocumentRoot {{app_dir}}/prod/apache/html
+    ErrorLog {{app_dir}}/prod/apache/logs/error_log
+    #CustomLog /apps/prod/apache/logs/access_log common
+    LogFormat "%a %l %u %t \"%r\" %>s %b %O %D" responsetime
+    CustomLog {{app_dir}}/prod/apache/logs/access_log responsetime
+
+    # favicon rewrites
+    RewriteEngine On
+    Options +FollowSymlinks
+
+    # CP
+    RewriteCond %\{REQUEST_URI\}  ^/cp    [NC]
+    RewriteCond %\{REQUEST_URI\}  \.ico   [NC]
+    RewriteRule (.*)    /indaba_favicons/indaba_CP.ico [R=301,L]
+    # PUB
+    RewriteCond %\{REQUEST_URI\}  ^/ids   [NC]
+    RewriteCond %\{REQUEST_URI\}  \.ico   [NC]
+    RewriteRule (.*)    /indaba_favicons/indaba_Pub.ico [R=301,L]
+    # DES - keep it last
+    RewriteCond %\{REQUEST_URI\}  ^/indaba_admin  [NC]
+    RewriteCond %\{REQUEST_URI\}  \.ico   [NC]
+    RewriteRule (.*)    /indaba_favicons/indaba_Des.ico [R=301,L]
+    # FM - keep it last
+    RewriteCond %\{REQUEST_URI\}  ^/indaba/.*\.ico        [NC,OR]
+    RewriteCond %\{REQUEST_URI\}  ^/favicon\.ico  [NC]
+    RewriteRule (.*\.ico)       /indaba_favicons/indaba_FM.ico [R=301,L]
+
+
+    # Proxy to tomcat
+
+    #ProxyPass /indaba/ ajp://localhost:8009/indaba/
+    #ProxyPass /indaba ajp://localhost:8009/indaba
+    ProxyPass /indaba/ ajp://localhost:8009/fm/
+    ProxyPass /indaba ajp://localhost:8009/fm
+
+    ProxyPass /indaba_wf/ ajp://localhost:7009/indaba_wf/
+    ProxyPass /indaba_wf ajp://localhost:7009/indaba_wf
+
+    ProxyPass /ids/ ajp://localhost:8009/ids/
+    ProxyPass /ids ajp://localhost:8009/ids
+
+    ProxyPass /cp/ ajp://localhost:8009/cp/
+    ProxyPass /cp ajp://localhost:8009/cp
+
+    ProxyPass /fm/ ajp://localhost:8009/fm/
+    ProxyPass /fm ajp://localhost:8009/fm
+
+    #ProxyPass /cpdemo/ ajp://localhost:8009/cpdemo/
+    #ProxyPass /cpdemo ajp://localhost:8009/cpdemo
+
+    ProxyPass /cpdemo/ ajp://localhost:7009/cpdemo/
+    ProxyPass /cpdemo ajp://localhost:7009/cpdemo
+
+</VirtualHost>

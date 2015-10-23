@@ -1,0 +1,34 @@
+################################################################
+#                                                              #
+#            Indaba web application configuration              #
+# Copyright 2010 OpenConcept Systems,Inc. All rights reserved. #
+#                                                              #
+################################################################
+
+# set email server
+mail.smtp.host={{mail_smtp_host}}
+mail.smtp.port={{mail_smtp_port}}
+mail.smtp.auth={{mail_smtp_auth}}
+mail.smtp.sender={{mail_smtp_sender}}
+mail.smtp.username={{mail_smtp_username}}
+
+
+# attachment file storage location
+# base path
+storage.upload.base=/data/controlpanel/upload
+# storage path format. 0: base; 1: type; 2: filename
+storage.path.format={0}/{1}/{2}
+
+# admintool
+admintool.baseurl=http://{{hostname}}/indaba_admin
+
+# cookie session timeout
+cookie.persistent.enabled=false
+session.token.timeout=360000
+
+# Access whitelist of I18N tools 
+i18n.tools.whitelist=localhost,127.0.0.1
+
+# New user activation link pattern
+new.user.access.link=http://{{hostname}}/indaba/preactivate.do?username={0}&password={1}
+

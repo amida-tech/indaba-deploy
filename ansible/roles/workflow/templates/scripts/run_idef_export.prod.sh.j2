@@ -1,0 +1,30 @@
+#!/bin/sh
+
+date=`date +'%Y%m%d%H%M'`
+
+base='/data/prod/indaba/idef'
+
+work_dir=$base/exp_work
+target_dir=$base/exp_$date
+problem_dir=$base/exp_problem_$date
+prod_dir=$base/export
+
+mkdir -p $work_dir
+
+curl http://localhost:7080/ids/idef.do?action=export\&pwd=idef2013\&productId=107 2>&1> $work_dir/exp_log.html
+curl http://localhost:7080/ids/idef.do?action=ge\&pwd=idef2013\&prods=1+6+10+11+13+15+19+20+23+34+36+37+39+40+41+45+55+86+89+90+94+95+96+97+98+99+100+101+107+115+118+121+128+132+153+154 2>&1> $work_dir/exp_log.html
+
+# check the output
+if ( grep '^\[SUCCESS\]' $work_dir/exp_log.html ) ; then
+	mv $work_dir $target_dir
+	rm -fr $prod_dir
+	ln -s $target_dir $prod_dir
+else
+	# problem
+	 mail {{ops_email}} -x {{ops_email}} -s 'Problem running idef export' -- -f {{ops_email}} << EOF
+Files are moved to /data/prod/indaba/exp_problem_$date
+EOF
+
+	mv $work_dir $problem_dir
+fi
+

@@ -1,0 +1,31 @@
+---
+- name: Install mariadb
+  yum: name="@mariadb" state=present
+  sudo: yes
+  notify: restart mariadb
+
+- service: name=mariadb state=started enabled=yes
+
+- yum: name="MySQL-python" state=present
+  sudo: yes
+  notify: restart mariadb
+
+- name: Create user
+  mysql_user: name=indaba_user password={{ mysql_indaba_password }} priv=*.*:ALL state=present
+  sudo: yes
+
+- mysql_db: name=indaba state=present
+  sudo: yes
+
+- mysql_db: name=indaba_publisher state=present
+  sudo: yes
+
+- copy: src=indaba_dump.sql dest=/tmp/indaba_dump.sql
+
+- mysql_db: login_user=indaba_user login_password={{ mysql_indaba_password }} name=indaba state=import target=/tmp/indaba_dump.sql
+
+- copy: src=indaba_publisher_dump.sql dest=/tmp/indaba_publisher_dump.sql
+
+- mysql_db: login_user=indaba_user login_password={{ mysql_indaba_password }} name=indaba_publisher state=import target=/tmp/indaba_publisher_dump.sql
+
+

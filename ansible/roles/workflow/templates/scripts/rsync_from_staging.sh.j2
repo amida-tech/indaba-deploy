@@ -1,0 +1,5 @@
+#!/bin/sh
+
+from=staging
+
+rsync -arvz --delete --files-from=/apps/scripts/rsync_include_staging --exclude-from=/apps/scripts/rsync_exclude_staging $from:/ /

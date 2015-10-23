@@ -1,0 +1,31 @@
+---
+- name: Install mysql repo
+  yum: name=http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm state=present
+  sudo: yes
+
+- name: Install mysql
+  yum: name=mysql-community-server state=present
+
+- name: Initialize mysql if not yet initialized
+  shell: if [ ! -f /var/lib/mysql/ibdata1 ]; then sudo -u mysql mysqld --initialize; fi; chdir=/var/lib/mysql
+  ignore_errors: yes
+
+- service: name=mysqld state=started enabled=yes
+
+- yum: name="MySQL-python" state=present
+  notify: restart mysqld
+
+- name: Create user
+  mysql_user: name=indaba_user password={{ mysql_indaba_password }} priv=*.*:ALL state=present
+
+- mysql_db: name=indaba state=present
+
+- mysql_db: name=indaba_publisher state=present
+
+- template: src=indaba_seed.sql.j2 dest=/tmp/indaba_seed.sql
+
+- mysql_db: login_user=indaba_user login_password={{ mysql_indaba_password }} name=indaba state=import target=/tmp/indaba_seed.sql
+
+- copy: src=indaba_publisher_schema.sql dest=/tmp/indaba_publisher_schema.sql
+
+- mysql_db: login_user=indaba_user login_password={{ mysql_indaba_password }} name=indaba_publisher state=import target=/tmp/indaba_publisher_schema.sql

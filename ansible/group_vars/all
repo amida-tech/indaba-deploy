@@ -1,0 +1,42 @@
+
+postfix_domain_name: indaba-demo.com
+
+ops_email: "alexey@amida-tech.com"
+ops_subject: "Amida Ops <alexey@amida-tech.com>"
+server_admin_email: "alexey@amida-tech.com"
+
+http_port: 80
+https_port: 443
+
+app_dir: /apps
+data_dir: /data
+
+tomcat_version: 5.5.26
+tomcat_url: https://archive.apache.org/dist/tomcat/tomcat-5/v5.5.26/bin/apache-tomcat-5.5.26.tar.gz
+
+tomcat_prod_port: 8080
+tomcat_prod_port_ssl: 8443
+tomcat_prod_ajp13_port: 8009
+
+tomcat_prod_wp_port: 7080
+tomcat_prod_wp_port_ssl: 7443
+tomcat_prod_wp_ajp13_port: 7009
+
+#mail_smtp_host: mail.indabaplatform.com
+mail_smtp_host: mail.indaba-demo.com
+mail_smtp_port: 587
+mail_smtp_auth: true
+#mail_smtp_sender: indaba@indabaplatform.com
+mail_smtp_sender: indaba@indaba-demo.com
+
+#hostname: indabaplatform.com
+#servername: www.indabaplatform.com
+#serveralias: indabaplatform.com
+
+hostname: indaba-demo.com
+#servername: www.indaba-demo.com
+servername: indaba-demo.com
+serveralias: indaba-demo.com
+
+mysql_host: localhost
+mysql_port: 3306

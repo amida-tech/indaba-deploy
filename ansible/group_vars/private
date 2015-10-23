@@ -1,0 +1,9 @@
+tomcat_admin_pwd: topsecret
+
+mail_smtp_username: indaba
+mail_smtp_password: topsecret
+
+mysql_root_password: topsecret
+mysql_indaba_password: topsecret
+
+admin_pwd: topsecret

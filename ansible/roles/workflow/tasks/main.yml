@@ -1,0 +1,66 @@
+---
+- file: path={{app_dir}}/scripts state=directory owner=root
+  
+- name: Copy cron script files
+  template: src=scripts/monitor_sql_session.sh.j2 dest={{app_dir}}/scripts/monitor_sql_session.sh
+  sudo: yes
+
+- name: Copy cron script files
+  template: src=scripts/rsync_from_staging.sh.j2 dest={{app_dir}}/scripts/rsync_from_staging.sh
+  sudo: yes
+
+- name: Copy cron script files
+  template: src=scripts/run_aggregation.prod.sh.j2 dest={{app_dir}}/scripts/run_aggregation.prod.sh
+  sudo: yes
+
+- name: Copy cron script files
+  template: src=scripts/run_idef_export.prod.sh.j2 dest={{app_dir}}/scripts/run_idef_export.prod.sh
+  sudo: yes
+
+- name: Copy cron script files
+  template: src=scripts/run_tasksummary.prod.sh.j2 dest={{app_dir}}/scripts/run_tasksummary.prod.sh
+  sudo: yes
+
+- name: Copy cron script files
+  template: src=scripts/run_workflow.prod.sh.j2 dest={{app_dir}}/scripts/run_workflow.prod.sh
+  sudo: yes
+
+- file: path={{data_dir}} state=directory owner=tomcat
+- file: path={{data_dir}}/prod/indaba/idef state=directory owner=tomcat
+
+- name: Copy db backup  file
+  copy: src=backup dest={{data_dir}}
+  sudo: yes
+  
+- cron: user="root" name="indaba workflow" job="{{app_dir}}/scripts/run_workflow.prod.sh >> {{app_dir}}/prod/tomcat5_indaba_wf/logs/run_workflow.log" backup=yes state=present
+  sudo: yes
+
+- cron: user="root" name="task summary" minute="00" hour="00" job="sh {{app_dir}}/scripts/run_tasksummary.prod.sh" state=present
+  sudo: yes
+
+- cron: user="root" name="indaba db backup as well as tomcat, http/html full (monthly) and incremental (weekly) backup" minute="15" hour="3" job="sh {{data_dir}}/backup/backup.sh" state=present
+  sudo: yes
+
+- cron: user="root" name="idef export batch" minute="50" hour="23" job="sh {{app_dir}}/scripts/run_idef_export.prod.sh" state=present
+  sudo: yes
+
+- cron: user="root" name="aggregation batch" minute="16" hour="22" job="sh {{app_dir}}/scripts/run_aggregation.prod.sh" state=present
+  sudo: yes
+
+#- cron: name="sync from staging" minute="40" hour="3" job="sh {{app_dir}}/scripts/rsync_from_staging.sh" state=present
+#  sudo: yes
+
+- cron: user="root" name="monitor number of db connections" minute="59" job="sh {{app_dir}}/scripts/monitor_sql_session.sh" state=present
+  sudo: yes
+
+- yum: name=http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-5.noarch.rpm state=present
+
+- yum: name=python-pip state=present
+
+#- get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/tmp/get-pip.py
+
+#- shell: python27 get-pip.py chdir=/tmp
+#  sudo: yes
+
+- shell: pip install awscli
+  sudo: yes

@@ -1,0 +1,40 @@
+#Updated for Centos 7
+#- name: get rpmforge
+#  get_url: url=http://packages.sw.be/rpmforge-release/rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm dest=~/
+#  get_url: url=http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm dest=~/
+
+- shell: rpm --import http://dag.wieers.com/rpm/packages/RPM-GPG-KEY.dag.txt
+
+- name: install rpmforge
+  yum: name=http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm state=present
+#  with_items:
+#  - rpm --import http://apt.sw.be/RPM-GPG-KEY.dag.txt
+#  - rpm -K ~/rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm
+#  - rpm -K ~/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+#comment out row below after the first run
+#  - rpm -U ~/rpmforge-release-0.5.3-1.el5.rf.x86_64.rpm
+#  - rpm -U ~/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+
+- name: install dev libraries
+  yum: name={{ item }}  state=present
+  with_items: [ "automake", "gcc-c++", "curl-devel", "git", "libxml2-devel", "make", "openssl-devel" ]
+
+#the latest 2.9.4 will not work with Centos 5 (looks like some features are not supported by OS)
+#- name: get fuse 2.8.4
+- name: get fuse 2.9.4
+#  get_url: url=http://sourceforge.net/projects/fuse/files/fuse-2.X/2.8.4/fuse-2.8.4.tar.gz dest=~/
+  get_url: url=http://sourceforge.net/projects/fuse/files/fuse-2.X/2.9.4/fuse-2.9.4.tar.gz dest=~/
+
+#- shell: cd ~/; tar -xzf ~/fuse-2.8.4.tar.gz
+- shell: cd ~/; tar -xzf ~/fuse-2.9.4.tar.gz
+
+- name: build fuse
+#  shell: cd ~/fuse-2.8.4; ./configure --prefix=/usr; make; make install; /sbin/ldconfig
+  shell: cd ~/fuse-2.9.4; ./configure --prefix=/usr; make; make install; /sbin/ldconfig
+
+- git: repo=https://github.com/s3fs-fuse/s3fs-fuse.git dest=~/s3fs-fuse
+
+- name: build s3fs-fuse
+  shell: "{{ item }}"
+  with_items:
+  - export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/lib64/pkgconfig/; cd /root/s3fs-fuse; ./autogen.sh; ./configure --prefix=/usr; make; make install; /sbin/ldconfig

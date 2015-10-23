@@ -1,0 +1,21 @@
+#!/bin/sh
+
+ps -fe |grep taskSummary.do | grep -v $$ >/dev/null
+if [[ $? -eq 0 ]]; then
+   echo `date` " :: TaskSummary is already running"
+   exit
+fi
+ps -fe |grep tomcat5_indaba_wf |grep -v $$ >/dev/null
+if [[ $? -eq 0 ]]; then
+   echo ''
+   echo `date` " :: Starting Task Summary"
+
+   # timeout after 5 minutes
+   echo `date` " :: Processing tasks"
+   /apps/scripts/exec_alarm.sh -t 300 curl --silent --compressed http://localhost:7080/indaba_wf/taskSummary.do
+
+   echo ''
+   echo `date` " :: TaskSummary finished"
+else 
+   echo `date` " :: The workflow tomcat instance is not running"
+fi
