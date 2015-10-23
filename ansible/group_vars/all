@@ -40,3 +40,5 @@ serveralias: indaba-demo.com
 
 mysql_host: localhost
 mysql_port: 3306
+
+aws_bucket: indaba-demo-backup
