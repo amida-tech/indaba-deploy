@@ -69,6 +69,13 @@ sudo service tomcat_wf restart
 sudo service httpd restart
 ```
 
+Database backup scripts rely on existnece of S3 bucket s3://indaba_backups, so you have to create it using
+```
+aws s3 mb s3://indaba_backups
+```
+
+Details can be found here http://docs.aws.amazon.com/cli/latest/userguide/using-s3-commands.html
+
 Admin should respond on host's http://your_host_name/indaba_admin
 
 http://your_host_name/cp - ControlPanel
