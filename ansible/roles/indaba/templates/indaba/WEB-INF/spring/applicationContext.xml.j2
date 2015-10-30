@@ -56,7 +56,7 @@
             <value>com.mysql.jdbc.Driver</value>
         </property>
         <property name="jdbcUrl">
-            <value>jdbc:mysql://{{hostname}}:#{systemProperties['port']!=null ? systemProperties['port']:3306}/indaba?autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;useDynamicCharsetInfo=false</value>
+            <value>jdbc:mysql://{{mysql_host}}:#{systemProperties['port']!=null ? systemProperties['port']:3306}/indaba?autoReconnect=true&amp;zeroDateTimeBehavior=convertToNull&amp;useUnicode=true&amp;characterEncoding=utf-8&amp;useDynamicCharsetInfo=false</value>
         </property>
         <property name="user">
             <value>indaba_user</value>
