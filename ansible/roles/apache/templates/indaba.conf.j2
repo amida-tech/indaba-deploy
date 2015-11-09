@@ -14,6 +14,13 @@ ProxyReceiveBufferSize 512
     Require all denied
 </FilesMatch>
 
+<Directory "{{app_dir}}/prod/apache/html">
+    AllowOverride None
+    # Allow open access:
+    Require all granted
+</Directory>
+
+
 <VirtualHost *:80>
 
     ServerAdmin {{server_admin_email}}

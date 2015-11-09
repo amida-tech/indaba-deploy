@@ -27,9 +27,10 @@
 
 - file: path={{data_dir}} state=directory owner=tomcat
 - file: path={{data_dir}}/prod/indaba/idef state=directory owner=tomcat
+- file: path={{data_dir}}/backup state=directory owner=tomcat
 
 - name: Copy db backup  file
-  template: src=backup/backup.sh.j2 dest={{data_dir}}backup/backup.sh owner=root
+  template: src=backup/backup.sh.j2 dest={{data_dir}}/backup/backup.sh owner=root
   
 - cron: user="root" name="indaba workflow" job="{{app_dir}}/scripts/run_workflow.prod.sh >> {{app_dir}}/prod/tomcat5_indaba_wf/logs/run_workflow.log" backup=yes state=present
   sudo: yes
